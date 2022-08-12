@@ -49,13 +49,13 @@ class MultiTask_BO(AbstractOptimizer):
         self.bo = GeneralBO(self.space, num_obj=3, rand_sample=10)
 
     def construct_microarchitecture_vec_set(self):
-        microarchitecture_embedding_set = []
+        microarchitecture_vec_set = []
         for i in range(1, self.design_space.size + 1):
-            microarchitecture_embedding_set.append(
+            microarchitecture_vec_set.append(
                 self.design_space.idx_to_vec(i)#id转换成向量，各个模块里的设计参数组
             )
-        np.save('micro.npy', np.array(microarchitecture_embedding_set))
-        return torch.Tensor(microarchitecture_embedding_set)
+        # np.save('micro.npy', np.array(microarchitecture_vec_set))
+        return microarchitecture_vec_set
 
     def construct_microarchitecture_embedding_set(self):
         microarchitecture_embedding_set = []
@@ -102,7 +102,7 @@ class MultiTask_BO(AbstractOptimizer):
             corner_case = []
             for i in range(self.design_space.size):
                 if is_max_corner[i] or is_min_corner[i]:
-                    corner_case.append(self.microarchitecture_embedding_set[i].type(torch.int).numpy().tolist())
+                    corner_case.append(self.embedding_set[i].type(torch.int).numpy().tolist())
             print('corner case:', corner_case)
 
             #random sample
@@ -134,11 +134,11 @@ class MultiTask_BO(AbstractOptimizer):
             return embedding
 
     def observe(self, x, y):
-        x_vec = [self.microarchitecture_embedding_to_vec(_x) for  _x in x]
+        x_vec = [self.microarchitecture_embedding_to_vec(_x) for _x in x]
         pD_x = pd.DataFrame(x_vec)
         pD_x.columns = ['Fetch', 'Decoder', 'ISU', 'IFU', 'ROB', 'PRF', 'LSU', 'I-Cache/MMU', 'D-Cache/MMU']
 
-        ob_y  = np.array(y)
+        ob_y = np.array(y)
         self.bo.observe(pD_x, ob_y)
 
 
