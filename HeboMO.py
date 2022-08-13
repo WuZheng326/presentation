@@ -138,7 +138,7 @@ class MultiTask_BO(AbstractOptimizer):
         pD_x = pd.DataFrame(x_vec)
         pD_x.columns = ['Fetch', 'Decoder', 'ISU', 'IFU', 'ROB', 'PRF', 'LSU', 'I-Cache/MMU', 'D-Cache/MMU']
 
-        ob_y = np.array(y)
+        ob_y  = np.array(y)
         self.bo.observe(pD_x, ob_y)
 
 
